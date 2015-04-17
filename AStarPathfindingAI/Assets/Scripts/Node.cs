@@ -11,6 +11,8 @@ public class Node
 	public int gCost;
 	public int hCost;
 
+	public Node parent;
+
 	public Node(bool _walkable, Vector3 _worldPosition, int _gridX, int _gridY)
 	{
 		walkable = _walkable;

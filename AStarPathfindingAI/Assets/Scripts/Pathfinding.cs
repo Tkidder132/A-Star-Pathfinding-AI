@@ -11,17 +11,22 @@ public class Pathfinding : MonoBehaviour {
 
 	void Awake()
 	{
+		print ("getting pathfinding components");
 		requestManager = GetComponent<PathRequestManager>();
+		print ("got path manager");
 		grid = GetComponent<Grid>();
+		print ("got the grid");
 	}
 
 	public void StartFindPath(Vector3 startPos, Vector3 targetPos)
 	{
+		print ("starting find path");
 		StartCoroutine(FindPath(startPos, targetPos));
 	}
 
 	IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
 	{
+		print("Here");
 		Stopwatch sw = new Stopwatch();
 		sw.Start();
 
@@ -77,15 +82,15 @@ public class Pathfinding : MonoBehaviour {
 						}
 					}
 				}
-
-				yield return null;
-				if( pathSuccess )
-				{
-					waypoints = RetracePath(startNode, targetNode);
-				}
-				requestManager.FinishProcessingPath(waypoints, pathSuccess);
 			}
 		}
+		yield return null;
+		if( pathSuccess )
+		{
+			print ("path success: " + pathSuccess );
+			waypoints = RetracePath(startNode, targetNode);
+		}
+		requestManager.FinishProcessingPath(waypoints, pathSuccess);
 	}
 
 	Vector3[] RetracePath(Node startNode, Node endNode)

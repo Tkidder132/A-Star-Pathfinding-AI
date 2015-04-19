@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class Grid : MonoBehaviour
 {
 	public bool displayGridGizmos;
-	public Transform player;
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
 	public float nodeRadius;
@@ -14,12 +13,38 @@ public class Grid : MonoBehaviour
 	float nodeDiameter;
 	int gridSizeX, gridSizeY;
 
-	void Start()
+	void Awake()
 	{
 		nodeDiameter = nodeRadius * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+		print("creating grid");
 		CreateGrid();
+		print("grid created");
+	}
+
+	public int MaxSize
+	{
+		get {
+			return gridSizeX * gridSizeY;
+		}
+	}
+
+	void CreateGrid()
+	{
+		grid = new Node[gridSizeX, gridSizeY];
+		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x/2 - Vector3.forward * gridWorldSize.y/2;
+		
+		
+		for( int x = 0; x < gridSizeX; x++ )
+		{
+			for( int y = 0; y < gridSizeY; y++ )
+			{
+				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
+				bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
+				grid[x,y] = new Node(walkable, worldPoint, x, y);
+			}
+		}
 	}
 
 	public List<Node> GetNeighbors(Node node)
@@ -59,30 +84,6 @@ public class Grid : MonoBehaviour
 		int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
 
 		return grid[x,y];
-	}
-
-	public int MaxSize
-	{
-		get {
-			return gridSizeX * gridSizeY;
-		}
-	}
-
-	void CreateGrid()
-	{
-		grid = new Node[gridSizeX, gridSizeY];
-		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x/2 - Vector3.forward * gridWorldSize.y/2;
-
-
-		for( int x = 0; x < gridSizeX; x++ )
-		{
-			for( int y = 0; y < gridSizeY; y++ )
-			{
-				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
-				bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
-				grid[x,y] = new Node(walkable, worldPoint, x, y);
-			}
-		}
 	}
 
 	void OnDrawGizmos()

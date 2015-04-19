@@ -21,13 +21,17 @@ public class PathRequestManager : MonoBehaviour {
 
 	public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback )
 	{
+		print ("path requested");
 		PathRequest newRequest = new PathRequest(pathStart, pathEnd, callback);
 		instance.pathRequestQueue.Enqueue(newRequest);
+		print ("path queued");
+		print ("trying next process");
 		instance.TryProcessNext();
 	}
 
 	void TryProcessNext()
 	{
+		print ("next process");
 		if( !isProcessingPath && pathRequestQueue.Count > 0 )
 		{
 			currentPathRequest = pathRequestQueue.Dequeue();

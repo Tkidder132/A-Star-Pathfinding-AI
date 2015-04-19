@@ -4,19 +4,17 @@ using System.Collections;
 public class Unit : MonoBehaviour {
 
 	public Transform target;
-	float speed = 1;
+	float speed = 15;
 	Vector3[] path;
 	int targetIndex;
 
 	void Start()
 	{
-		print ("requesting path");
 		PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
 	}
 
 	public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
 	{
-		print ("path found");
 		if( pathSuccessful )
 		{
 			path = newPath;
@@ -27,6 +25,7 @@ public class Unit : MonoBehaviour {
 
 	IEnumerator FollowPath()
 	{
+		print ("omw");
 		Vector3 currentWayPoint = path[0];
 
 		while( true )
@@ -39,11 +38,11 @@ public class Unit : MonoBehaviour {
 					yield break;
 				}
 				currentWayPoint = path[targetIndex];
-
-				transform.position = Vector3.MoveTowards(transform.position, currentWayPoint, speed);
-				yield return null;
 			}
+			transform.position = Vector3.MoveTowards(transform.position, currentWayPoint, speed * Time.deltaTime);
+			yield return null;
 		}
+		yield return null;
 	}
 
 	public void OnDrawGizmos()
